@@ -1,4 +1,3 @@
-// models/users.model.js
 import mongoose from "mongoose";
 import { createHash, isValidPassword } from "../utils/bcrypt.js";
 
@@ -27,13 +26,14 @@ const userSchema = mongoose.Schema({
 userSchema.pre('save', async function (next) {
     const user = this;
     if (user.isModified('password')) {
-        user.password = createHash(user.password);
+        user.password = await createHash(user.password);
+        console.log(user.password);
     }
     next();
 });
 
-userSchema.methods.isValidPassword = function (password) {
-    return isValidPassword(this, password);
+userSchema.methods.isValidPassword = async function (password) {
+    return await isValidPassword(this, password);
 };
 
 export const usersModel = mongoose.model(userCollection, userSchema);

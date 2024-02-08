@@ -1,3 +1,4 @@
+// session.routes.js
 import { Router } from "express";
 import passport from "passport";
 const sessionRoutes = Router();
@@ -11,19 +12,12 @@ sessionRoutes.get('/failregister', (req, res) => {
 });
 
 sessionRoutes.post('/login', passport.authenticate('login', { failureRedirect: '/faillogin' }), (req, res) => {
-    const user = req.user;
-    if (!user) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-    }
-    if (user.email === 'adminCoder@coder.com' && user.password === 'adminCod3r123') {
-        user.role = 'admin';
-    } else {
-        user.role = 'usuario';
-    }
-    req.session.user = user;
-    res.redirect('/');
+    res.redirect('/'); 
 });
 
+sessionRoutes.get('/faillogin', (req, res) => {
+    res.status(401).json({ message: 'Invalid credentials' }); 
+});
 
 sessionRoutes.get('/logout', (req, res) => {
     req.session.destroy((error) => {
@@ -46,7 +40,6 @@ sessionRoutes.post('/logout', (req, res) => {
 sessionRoutes.get('/github', passport.authenticate('github', { scope: ['user:email'] }), (req, res) => { });
 
 sessionRoutes.get('/githubcallback', passport.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
-    req.session.user = req.user;
     res.redirect('/');
 });
 
